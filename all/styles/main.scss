@@ -1,0 +1,44 @@
+@use 'variables';
+@use 'color';
+@use 'mixins';
+
+// Основные стили
+body {
+    font-family: variables.$font-stack;
+    font-size: variables.$base-font-size;
+    background-color: color.$background-color;
+    color: color.$text-color;
+}
+
+.card {
+    background-color: white;
+    border-radius: variables.$border-radius;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    padding: 20px;
+
+    .card-title {
+        font-size: 1.5em;
+        color: color.$primary-color;
+        margin-bottom: 10px;
+    }
+
+    .card-description {
+        font-size: 1em;
+        margin-bottom: 15px;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+
+        .price {
+            font-weight: bold;
+            color: color.$secondary-color;
+        }
+
+        .buy-button {
+            @include mixins.button(color.$primary-color, white);
+        }
+    }
+}
