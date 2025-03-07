@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog</title>
+    <link rel="icon" href="../src/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e272e 0%, #2c3e50 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #ecf0f1;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ecf0f1;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 1.2em;
+            color: #bdc3c7;
+            font-weight: 500;
+        }
+
+        #category-select {
+            padding: 12px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            background: #34495e;
+            color: #ecf0f1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #category-select:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            background: #3d566e;
+            transform: translateY(-2px);
+        }
+
+        #category-select:focus {
+            border: 2px solid #3498db;
+        }
+
+        #product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: #2c3e50;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            border: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: #34495e;
+        }
+
+        .product-card h3 {
+            font-size: 1.5em;
+            color: #ecf0f1;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .product-card p {
+            font-size: 1em;
+            color: #bdc3c7;
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .product-card p strong {
+            color: #ecf0f1;
+            font-weight: 500;
+        }
+
+        .product-card p:nth-child(2) {
+            font-size: 1.2em;
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .category-filter {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            #category-select {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            #product-list {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Каталог товаров</h1>
+
+    <div class="category-filter">
+        <label for="category-select">Выберите категорию:</label>
+        <select id="category-select">
+            <option value="">Все товары</option>
+        </select>
+    </div>
+
+    <div id="product-list"></div>
+
+    <script>
+        const productList = document.getElementById('product-list');
+        const categorySelect = document.getElementById('category-select');
+
+        // Отображение продуктов
+        function displayProducts(products) {
+            productList.innerHTML = '';
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.classList.add('product-card');
+                card.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p><strong>Цена:</strong> ${product.price} руб.</p>
+                    <p><strong>Описание:</strong> ${product.description}</p>
+                    <p><strong>Категории:</strong> ${product.categories}</p>
+                `;
+                productList.appendChild(card);
+            });
+        }
+
+        // Загрузка категорий
+        fetch('http://localhost:3000/categories')
+            .then(response => response.json())
+            .then(categories => {
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categorySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Ошибка загрузки категорий:', error));
+
+        // Загрузка продуктов и настройка фильтрации
+        fetch('http://localhost:3000/products')
+            .then(response => response.json())
+            .then(data => {
+                displayProducts(data);
+
+                categorySelect.addEventListener('change', () => {
+                    const selectedCategory = categorySelect.value;
+                    const filteredProducts = selectedCategory
+                        ? data.filter(product => product.categories.split(', ').includes(selectedCategory))
+                        : data;
+                    displayProducts(filteredProducts);
+                });
+            })
+            .catch(error => console.error('Ошибка загрузки товаров:', error));
+    </script>
+</body>
+</html>

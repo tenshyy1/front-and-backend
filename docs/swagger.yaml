@@ -1,0 +1,170 @@
+definitions:
+  main.Product:
+    properties:
+      categories:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+info:
+  contact: {}
+paths:
+  /categories:
+    get:
+      description: Возвращает список уникальных категорий
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список категорий" example=["Electronics","Computers","Gadgets"]
+          schema:
+            items:
+              type: string
+            type: array
+      summary: Получение списка категорий
+  /products:
+    get:
+      description: Возвращает список всех продуктов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список продуктов" example=[{"id":1,"name":"Laptop","description":"High-performance
+            laptop","price":999.99,"categories":"Electronics, Computers"}]
+          schema:
+            items:
+              $ref: '#/definitions/main.Product'
+            type: array
+      summary: Получение всех продуктов
+    post:
+      consumes:
+      - application/json
+      description: Создает новый продукт с указанными параметрами
+      parameters:
+      - description: Данные продукта
+        in: body
+        name: product
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Успешно созданный продукт" example={"id":1,"name":"Laptop","description":"High-performance
+            laptop","price":999.99,"categories":"Electronics, Computers"}
+          schema:
+            $ref: '#/definitions/main.Product'
+        "400":
+          description: 'Ошибка валидации" example={"error":"Ошибка парсинга данных:
+            name is required"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Ошибка сервера" example={"error":"Ошибка при сохранении в
+            базу: database error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создание нового продукта
+  /products/{id}:
+    delete:
+      description: Удаляет продукт по ID
+      parameters:
+      - description: ID продукта
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное удаление" example={"message":"Product deleted successfully"}
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера" example={"error":"Failed to delete product"}
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удаление продукта
+    get:
+      description: Возвращает информацию о конкретном продукте
+      parameters:
+      - description: ID продукта
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные продукта" example={"id":1,"name":"Laptop","description":"High-performance
+            laptop","price":999.99,"categories":"Electronics, Computers"}
+          schema:
+            $ref: '#/definitions/main.Product'
+        "404":
+          description: Продукт не найден" example={"error":"Product not found"}
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получение продукта по ID
+    put:
+      consumes:
+      - application/json
+      description: Обновляет существующий продукт по ID
+      parameters:
+      - description: ID продукта
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Данные продукта
+        in: body
+        name: product
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленный продукт" example={"id":1,"name":"Updated Laptop","description":"Updated
+            description","price":1099.99,"categories":"Electronics, Gadgets"}
+          schema:
+            $ref: '#/definitions/main.Product'
+        "400":
+          description: Ошибка валидации" example={"error":"name is required"}
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Продукт не найден" example={"error":"Product not found"}
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера" example={"error":"Failed to save product"}
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновление продукта
+swagger: "2.0"

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель</title>
+    <link rel="icon" href="favicon2.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e272e 0%, #2c3e50 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #ecf0f1;
+        }
+
+        h1, h2 {
+            color: #ecf0f1;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            font-size: 1.8em;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: #34495e;
+            margin: 30px 0;
+        }
+
+        #add-product-form {
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+            margin: 0 auto 40px;
+        }
+
+        #add-product-form label {
+            display: block;
+            color: #bdc3c7;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        #add-product-form input,
+        #add-product-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #34495e;
+            color: #ecf0f1;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #add-product-form input:focus,
+        #add-product-form textarea:focus {
+            background: #3d566e;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
+
+        #add-product-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        #add-product-form button {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #add-product-form button:hover {
+            background: #2980b9;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.5);
+        }
+
+        #product-list-admin {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .product-item {
+            background: #2c3e50;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            background: #34495e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .product-item p {
+            color: #bdc3c7;
+            margin-bottom: 10px;
+        }
+
+        .product-item p strong {
+            color: #ecf0f1;
+        }
+
+        .product-item button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .product-item button:nth-child(2) {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .product-item button:nth-child(2):hover {
+            background: #2980b9;
+        }
+
+        .product-item button:nth-child(3) {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .product-item button:nth-child(3):hover {
+            background: #c0392b;
+        }
+
+        .edit-form {
+            display: none;
+            padding: 15px;
+            background: #34495e;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .edit-form label {
+            display: block;
+            color: #bdc3c7;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .edit-form input,
+        .edit-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #3d566e;
+            color: #ecf0f1;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .edit-form input:focus,
+        .edit-form textarea:focus {
+            background: #4b6584;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
+
+        .edit-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .edit-form button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-form button[type="submit"] {
+            background: #2ecc71;
+            color: #fff;
+        }
+
+        .edit-form button[type="submit"]:hover {
+            background: #27ae60;
+        }
+
+        .edit-form button[type="button"] {
+            background: #7f8c8d;
+            color: #fff;
+        }
+
+        .edit-form button[type="button"]:hover {
+            background: #95a5a6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            #add-product-form,
+            #product-list-admin {
+                max-width: 100%;
+            }
+
+            .product-item button {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .edit-form button {
+                width: 48%;
+                margin: 5px 1%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Панель администратора</h1>
+    
+    <h2>Добавить товар</h2>
+    <form id="add-product-form">
+        <label for="name">Название:</label>
+        <input type="text" id="name" required>
+        <label for="price">Цена:</label>
+        <input type="number" id="price" required>
+        <label for="description">Описание:</label>
+        <textarea id="description" required></textarea>
+        <label for="categories">Категории (через запятую):</label>
+        <input type="text" id="categories" required>
+        <button type="submit">Добавить товар</button>
+    </form>
+
+    <hr>
+
+    <h2>Список товаров</h2>
+    <div id="product-list-admin"></div>
+
+    <script>
+        // Загрузка продуктов
+        function loadProducts() {
+            fetch('http://localhost:3000/products')
+                .then(response => response.json())
+                .then(data => {
+                    const productListAdmin = document.getElementById('product-list-admin');
+                    productListAdmin.innerHTML = '';
+                    data.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.classList.add('product-item');
+                        productDiv.innerHTML = `
+                            <p><strong>${product.name}</strong> - ${product.price} руб. <br>Категории: ${product.categories}</p>
+                            <button onclick="editProduct(${product.id})">Редактировать</button>
+                            <button onclick="deleteProduct(${product.id})">Удалить</button>
+                            <form class="edit-form" id="edit-form-${product.id}">
+                                <label for="edit-name-${product.id}">Название:</label>
+                                <input type="text" id="edit-name-${product.id}" value="${product.name}" required>
+                                <label for="edit-price-${product.id}">Цена:</label>
+                                <input type="number" id="edit-price-${product.id}" value="${product.price}" required>
+                                <label for="edit-description-${product.id}">Описание:</label>
+                                <textarea id="edit-description-${product.id}" required>${product.description}</textarea>
+                                <label for="edit-categories-${product.id}">Категории (через запятую):</label>
+                                <input type="text" id="edit-categories-${product.id}" value="${product.categories}" required>
+                                <button type="submit">Сохранить</button>
+                                <button type="button" onclick="cancelEdit(${product.id})">Отмена</button>
+                            </form>
+                        `;
+                        productListAdmin.appendChild(productDiv);
+                        document.getElementById(`edit-form-${product.id}`).addEventListener('submit', function(event) {
+                            event.preventDefault();
+                            saveEdit(product.id);
+                        });
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Добавление продукта
+        document.getElementById('add-product-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const description = document.getElementById('description').value;
+            const categories = document.getElementById('categories').value.split(',').map(cat => cat.trim());
+
+            const productData = { name, price, description, categories };
+            fetch('http://localhost:3000/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productData)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка: ' + response.status);
+                return response.json();
+            })
+            .then(() => {
+                loadProducts();
+                this.reset();
+            })
+            .catch(error => console.error('Ошибка:', error));
+        });
+
+        // Начало редактирования
+        function editProduct(id) {
+            document.getElementById(`edit-form-${id}`).style.display = 'block';
+        }
+
+        // Сохранение изменений
+        function saveEdit(id) {
+            const name = document.getElementById(`edit-name-${id}`).value;
+            const price = parseFloat(document.getElementById(`edit-price-${id}`).value);
+            const description = document.getElementById(`edit-description-${id}`).value;
+            const categories = document.getElementById(`edit-categories-${id}`).value.split(',').map(cat => cat.trim());
+
+            const updatedData = { name, price, description, categories };
+            fetch(`http://localhost:3000/products/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка: ' + response.status);
+                return response.json();
+            })
+            .then(() => {
+                loadProducts();
+                cancelEdit(id);
+            })
+            .catch(error => console.error('Ошибка:', error));
+        }
+
+        // Отмена редактирования
+        function cancelEdit(id) {
+            document.getElementById(`edit-form-${id}`).style.display = 'none';
+        }
+
+        // Удаление продукта
+        function deleteProduct(id) {
+            fetch(`http://localhost:3000/products/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка: ' + response.status);
+                return response.json();
+            })
+            .then(() => loadProducts())
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Загрузка продуктов при старте
+        loadProducts();
+    </script>
+</body>
+</html>
